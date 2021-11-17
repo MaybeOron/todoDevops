@@ -130,8 +130,8 @@ provider "helm" {
 
 #   repository = "https://kubernetes.github.io/ingress-nginx"
 #   chart      = "ingress-nginx"
-    # namespace = "ingress-nginx"
-    # create_namespace = true
+#     namespace = "ingress-nginx"
+#     create_namespace = true
 # }
 
 
