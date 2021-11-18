@@ -15,8 +15,9 @@ data "aws_eks_cluster_auth" "cluster" {
   name = module.eks.cluster_id
 }
 
-data "aws_availability_zones" "available" {
-}
+data "aws_availability_zones" "available" {}
+
+data "aws_caller_identity" "current" {}
 
 resource "aws_security_group" "worker_group_mgmt_one" {
   name_prefix = "worker_group_mgmt_one"
@@ -116,6 +117,7 @@ provider "kubernetes" {
   token                  = data.aws_eks_cluster_auth.cluster.token
   load_config_file       = false
   version                = "~> 1.11"
+  config_path = "~/.kube/config"
 }
 
 provider "helm" {
@@ -143,7 +145,29 @@ resource "helm_release" "kube-prometheus-stack" {
   namespace = "kube-monitoring"
   create_namespace = true
   values = [<<EOF
+  grafana:
+    service:
+      type: "LoadBalancer"
+    persistence:
+      enabled: true
+      type: pvc
+      storageClassName: gp2
+      accessModes:
+      - ReadWriteOnce
+      size: 4Gi
+      finalizers:
+      - kubernetes.io/pvc-protection
 
+  prometheus:
+    prometheusSpec:
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: gp2
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 5Gi
   EOF
   ]
 }
