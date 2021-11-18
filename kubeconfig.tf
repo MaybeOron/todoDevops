@@ -1,5 +1,5 @@
 resource "local_file" "mykubeconfig" {
-    # depends_on = [module.eks]
+    depends_on = [module.eks,module.vpc]
     content     = <<KUBECONFIG
 apiVersion: v1
 clusters:
