@@ -117,12 +117,13 @@ provider "kubernetes" {
   token                  = data.aws_eks_cluster_auth.cluster.token
   load_config_file       = false
   version                = "~> 1.11"
-  config_path = "~/.kube/config"
+  config_path = var.kube_config_path
 }
 
 provider "helm" {
+  # depends_on = [local_file.mykubeconfig]
   kubernetes {
-    config_path = "~/.kube/config"
+    config_path = var.kube_config_path
   }
 }
 
@@ -213,11 +214,11 @@ resource "helm_release" "elasticsearch" {
     cpu: "500m"
     memory: "1.0Gi"
   
-  volumeClaimTemplate:
-  accessModes: ["ReadWriteOnce"]
-  resources:
-    requests:
-      storage: 4Gi
+  # volumeClaimTemplate:
+  # accessModes: ["ReadWriteOnce"]
+  # resources:
+  #   requests:
+  #     storage: 4Gi
   EOF
   ]
 }
