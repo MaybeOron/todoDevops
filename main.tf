@@ -182,6 +182,8 @@ resource "helm_release" "kibana" {
   values = [<<EOF
   imageTag: "7.15.0"
   replicas: 1
+  service:
+    type: "LoadBalancer"
   resources:
   requests:
     cpu: "400m"
@@ -210,6 +212,12 @@ resource "helm_release" "elasticsearch" {
   limits:
     cpu: "500m"
     memory: "1.0Gi"
+  
+  volumeClaimTemplate:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 4Gi
   EOF
   ]
 }
