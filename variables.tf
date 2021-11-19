@@ -1,3 +1,16 @@
+variable "github_owner" {
+  type        = string
+  default     = "MaybeOron"
+  description = "github owner"
+}
+
+variable "github_token" {
+  type        = string
+  default     = "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"
+  description = "github token"
+}
+
+
 variable "flux_repo" {
   default     = "git@github.com:MaybeOron/todoFlux"
   description = "flux repo link"

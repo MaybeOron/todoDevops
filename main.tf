@@ -122,6 +122,32 @@ provider "kubernetes" {
 
 provider "helm" {
   kubernetes {
-    config_path = var.kube_config_path
+    config_path = local_file.mykubeconfig.filename
   }
+}
+
+provider "github" {
+  owner = var.github_owner
+  token = var.github_token
+}
+
+resource "null_resource" "fluxdk" {
+  provisioner "local-exec" {
+    command = "echo $(fluxctl identity --k8s-fwd-ns fluxcd) > dk.txt"
+    interpreter = ["/bin/bash", "-c"]
+  }
+  depends_on = [helm_release.helm-operator]
+}
+
+data "local_file" "fluxdk" {
+    filename = "dk.txt"
+    depends_on = [null_resource.fluxdk]
+}
+
+resource "github_repository_deploy_key" "main" {
+  title      = "fluxcd-dk"
+  repository = "todoFlux"
+  key        = data.local_file.fluxdk.content
+  read_only  = false
+  depends_on = [data.local_file.fluxdk]
 }

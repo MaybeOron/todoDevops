@@ -32,11 +32,3 @@ users:
 KUBECONFIG
     filename = "${var.kube_config_path}"
 }
-
-# resource "null_resource" "example1" {
-#   provisioner "local-exec" {
-#     command = "aws eks update-kubeconfig --name portfolio-eks  --region eu-central-1 > completed.txt"
-#     interpreter = ["/bin/bash", "-c"]
-#   }
-#   depends_on = [module.eks]
-# }
